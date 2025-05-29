@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Error Mix" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--follow-tags" />
+        <option name="title" value="Current Branch" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="ee42a905-827f-45c3-a512-eb0afc314538" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2x1zdW08HudO8FZ0HTXYisQMMJf" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/ziruigagaga/PycharmProjects/Composer",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ziruigagaga\PycharmProjects\Composer" />
+      <recent name="C:\Users\ziruigagaga\PycharmProjects\Composer\data" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ziruigagaga\PycharmProjects\Composer\data" />
+      <recent name="C:\Users\ziruigagaga\PycharmProjects\Composer\data\color_features" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="" />
+      <created>1747120454209</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1747120454209</updated>
+      <workItem from="1747120455346" duration="1014000" />
+      <workItem from="1747121488435" duration="12150000" />
+      <workItem from="1747154404405" duration="1292000" />
+      <workItem from="1747197474504" duration="2901000" />
+      <workItem from="1747286340572" duration="6000" />
+      <workItem from="1747291412702" duration="14377000" />
+      <workItem from="1747318766977" duration="27893000" />
+      <workItem from="1747581878028" duration="8195000" />
+      <workItem from="1747592073246" duration="773000" />
+      <workItem from="1747806613142" duration="1872000" />
+      <workItem from="1748081772980" duration="2658000" />
+      <workItem from="1748233007032" duration="3556000" />
+      <workItem from="1748276568450" duration="8740000" />
+      <workItem from="1748331735860" duration="15234000" />
+      <workItem from="1748366452567" duration="101000" />
+      <workItem from="1748409290704" duration="10803000" />
+      <workItem from="1748444009503" duration="691000" />
+      <workItem from="1748493366743" duration="25000" />
+      <workItem from="1748502449483" duration="7866000" />
+      <workItem from="1748539644128" duration="107000" />
+      <workItem from="1748539782219" duration="15000" />
+    </task>
+    <task id="LOCAL-00001" summary="First Commit">
+      <created>1747590484790</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1747590484790</updated>
+    </task>
+    <task id="LOCAL-00002" summary="First Commit">
+      <created>1747590508000</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1747590508000</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Test Change">
+      <created>1747807842170</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1747807842171</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Train Change">
+      <created>1748082152824</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1748082152824</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Train Change">
+      <created>1748097839895</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1748097839895</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Train Change">
+      <created>1748097892094</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1748097892094</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Train Change">
+      <created>1748098063676</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1748098063676</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Train Change">
+      <created>1748098098746</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1748098098746</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Local Condition Change">
+      <created>1748234565961</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1748234565961</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Train Change">
+      <created>1748235932451</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1748235932451</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Global Condition">
+      <created>1748320454360</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1748320454360</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Dataset Modify">
+      <created>1748325083114</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1748325083114</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Image to Color">
+      <created>1748325794396</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1748325794396</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Import Correct">
+      <created>1748334290916</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1748334290916</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Dataset Increase PNG support">
+      <created>1748334421262</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1748334421262</updated>
+    </task>
+    <task id="LOCAL-00016" summary="preprocess script">
+      <created>1748336100305</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1748336100305</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Multi GPU Support">
+      <created>1748339261936</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1748339261936</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Delete test file">
+      <created>1748339346797</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1748339346797</updated>
+    </task>
+    <task id="LOCAL-00019" summary="requirement.txt">
+      <created>1748346469274</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1748346469274</updated>
+    </task>
+    <task id="LOCAL-00020" summary="README.md">
+      <created>1748346523184</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1748346523184</updated>
+    </task>
+    <task id="LOCAL-00021" summary="README.md">
+      <created>1748357824920</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1748357824920</updated>
+    </task>
+    <task id="LOCAL-00022" summary="README.md">
+      <created>1748364258869</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1748364258869</updated>
+    </task>
+    <task id="LOCAL-00023" summary="image2text change">
+      <created>1748366498409</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1748366498409</updated>
+    </task>
+    <task id="LOCAL-00024" summary="error mix">
+      <created>1748416039599</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1748416039599</updated>
+    </task>
+    <task id="LOCAL-00025" summary="error mix">
+      <created>1748416209159</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1748416209159</updated>
+    </task>
+    <task id="LOCAL-00026" summary="error mix">
+      <created>1748417577711</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1748417577711</updated>
+    </task>
+    <task id="LOCAL-00027" summary="cache dir change">
+      <created>1748423999172</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1748423999172</updated>
+    </task>
+    <task id="LOCAL-00028" summary="some small fix">
+      <created>1748443569175</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1748443569175</updated>
+    </task>
+    <task id="LOCAL-00029" summary="some small fix">
+      <created>1748443817122</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1748443817122</updated>
+    </task>
+    <task id="LOCAL-00030" summary="requirements.txt">
+      <created>1748444356787</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1748444356787</updated>
+    </task>
+    <task id="LOCAL-00031" summary="README.md">
+      <created>1748444480865</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1748444480865</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Error Mix">
+      <created>1748532247484</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1748532247484</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Error Mix">
+      <created>1748532453247</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1748532453247</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Error Mix">
+      <created>1748532524856</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1748532524856</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Error Mix">
+      <created>1748533218806</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1748533218806</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Paths">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="file:$PROJECT_DIR$/data/feature_maps.zip" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="First Commit" />
+    <MESSAGE value="Test Change" />
+    <MESSAGE value="Local Condition Change" />
+    <MESSAGE value="Train Change" />
+    <MESSAGE value="Global Condition" />
+    <MESSAGE value="Dataset Modify" />
+    <MESSAGE value="Image to Color" />
+    <MESSAGE value="Import Correct" />
+    <MESSAGE value="Dataset Increase PNG support" />
+    <MESSAGE value="preprocess script" />
+    <MESSAGE value="Multi GPU Support" />
+    <MESSAGE value="Delete test file" />
+    <MESSAGE value="requirement.txt" />
+    <MESSAGE value="image2text change" />
+    <MESSAGE value="error mix" />
+    <MESSAGE value="cache dir change" />
+    <MESSAGE value="some small fix" />
+    <MESSAGE value="requirements.txt" />
+    <MESSAGE value="README.md" />
+    <MESSAGE value="Error Mix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Error Mix" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Composer$load_and_save_test.coverage" NAME="load_and_save_test 覆盖结果" MODIFIED="1747366933428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$image2text.coverage" NAME="image2text 覆盖结果" MODIFIED="1748280030751" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$train_test.coverage" NAME="train_test 覆盖结果" MODIFIED="1748502709268" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$infer.coverage" NAME="infer 覆盖结果" MODIFIED="1748346399614" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$testt.coverage" NAME="testt 覆盖结果" MODIFIED="1747807679451" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$train.coverage" NAME="train 覆盖结果" MODIFIED="1748340898106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$preprocess.coverage" NAME="preprocess 覆盖结果" MODIFIED="1748356639434" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$drop_cond_test.coverage" NAME="drop_cond_test 覆盖结果" MODIFIED="1747297301659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$ComposerUnet.coverage" NAME="ComposerUnet 覆盖结果" MODIFIED="1747588913073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$load_test.coverage" NAME="load_test 覆盖结果" MODIFIED="1747366510395" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Composer$test.coverage" NAME="test 覆盖结果" MODIFIED="1747303684721" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

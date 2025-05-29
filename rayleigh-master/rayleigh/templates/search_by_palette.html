@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rayleigh: Search by multiple colors</title>
+  <link href="/static/main.css" media="all" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+  <div id="content">
+    <!-- The left sidebar: palette selection and histogram display. -->
+    <div id="search_sidebar">
+      <div id="palette_search">
+        <form id="palette_search_form" action='#'>
+          <div id="palette_search_form_colors">
+            <h3>Colors</h3>
+            {% include 'palette.html' %}
+            <input type="hidden" id="palette_search_form_hidden_colors" name="colors" value="" />
+            <!--<input type="hidden" id="palette_search_form_hidden_values" name="values" value="" />-->
+          </div>
+          <div id="palette_search_form_sic_types">
+            <h3>Search Method</h3>
+            {% for st in sic_types %}
+              <input type="radio" name="sic_type" value="{{ st }}" {{ 'checked' if st == sic_type else '' }}>{{ st }}<br />
+            {% endfor %}
+
+            <h3>Palette Smoothing</h3>
+            {% for s in sigmas %}
+              <input type="radio" name="sigma" value={{ s }} {{ 'checked' if s == sigma else '' }}>{{ s }}<br />
+            {% endfor %}
+          </div>
+          <input id="palette_search_form_submit" type="submit" value="Search" />
+        </form>
+      </div>
+      <hr />
+      <div id="palette_histogram">
+        <h3>Palette histogram</h3>
+        <div id="palette_query"></div>
+      </div>
+    </div>
+
+    <!-- Main area: returned images. -->
+    <div id="images">
+      <h3>Matching images</h3>
+      <div id="results">
+      </div>
+    </div>
+  </div>
+  <script src="/static/jquery-1.8.3.js"></script>
+  <script src="/static/sprintf-0.7-beta1.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Add a simple URL query string parser to jQuery.
+      $.urlParam = function (name){
+        var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (!results) { return 0; }
+        return results[1] || 0;
+      }
+
+      // Add form submission JS.
+      $('#palette_search_form').submit(function() {
+        var sic_type = $("#palette_search_form input[name='sic_type']:checked").val();
+        var sigma = $("#palette_search_form input[name='sigma']:checked").val();
+        var colors = $('#palette_search_form_hidden_colors').serialize();
+        var search_url = sprintf('/search_by_palette/%s/%s?%s',
+          sic_type, sigma, colors);
+        window.location = search_url;
+        return false;
+      });
+
+      // Prepare the color palette search form.
+      var sic_type = "{{ sic_type }}";
+      var sigma = "{{ sigma }}";
+      var colors = {{ colors }} || {};
+      colors_str = Object.keys(colors).join(',');
+      $('#palette_search_form_hidden_colors').val(colors_str);
+
+      // Display the initial selected colors.
+      $.each(colors, function(key, val) {
+        document.getElementById(key).setAttribute('class', 'selected');
+      });
+
+      // Add selection toggles to all the colors in the palette.
+      // Selection toggles update the UI and set the hidden 'colors' input field.
+      var toggleSelected = function(event) {
+        if (this.getAttribute('class') == 'selected') {
+          delete(colors[this.id]);
+          this.setAttribute('class', '');
+        } else {
+          colors[this.id] = 1;
+          this.setAttribute('class', 'selected');
+        }
+        colors_str = Object.keys(colors).join(',');
+        $('#palette_search_form_hidden_colors').val(colors_str);
+      };
+      $('a').each(function(i,el) {
+        el.onclick = toggleSelected;
+      });
+
+      // Make the request for the palette query histogram and image results.
+      var display_results = function(json_data) {
+        // note: sprintf does not work in the below line
+        $('#palette_query').html(
+          '<img width="240px" src="data:image/png;base64,' + json_data['pq_hist'] + '" />'
+        );
+        {% include 'display_images.js' %}
+      }
+      var search_url = sprintf(
+        '/search_by_palette_json/%s/%s', sic_type, sigma);
+      $.getJSON(search_url, data = {
+          'colors': Object.keys(colors).join(',')},
+          success=display_results);
+    });
+  </script>
+</body>
+</html>

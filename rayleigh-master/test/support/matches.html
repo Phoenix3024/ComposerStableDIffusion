@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rayleigh: Search by multiple colors</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      line-height: 1.2em;
+      background: #f5f5f5;
+      color: #333333;
+    }
+    div {
+      display: inline-block;
+      vertical-align: top;
+    }
+    div.results_block {
+      display: block;
+    }
+    div.query_image {
+      padding-right: 20px;
+      border-right: 1px dashed gray;
+    }
+  </style>
+</head>
+<body>
+{% if num_queries %}
+  <p>Finished {{ num_queries }} in {{ '%.3f s'|format(time_elapsed) }} at {{ '%.3f ms/img' | format(1000 * time_elapsed / num_queries) }}.</p>
+{% endif %}
+{% for query_image, results, time_elapsed in data %}
+  <div id="results_block">
+    <div class="query_image">
+      <img src="{{ query_image['url'] }}" width="{{ '%d' | format(query_image['width'] / 4) }}" height="{{ '%d' | format(query_image['height'] / 4) }}" />
+    </div>
+    <div class="query_results">
+    {% for result in results %}
+      <div class="query_result">
+        <img src="{{ result['url'] }}" width="{{ '%d' | format(result['width'] / 4) }}" height="{{ '%d' | format(result['height'] / 4) }}" />
+        <br />
+        <span>{{ '%.3f'|format(result['distance']) }}</span>
+      </div>
+    {% endfor %}
+      <hr />
+    </div>
+  </div>
+{% endfor %}
+</body>
+</html>
