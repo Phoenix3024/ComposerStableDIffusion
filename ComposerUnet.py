@@ -25,7 +25,9 @@ class ComposerUNet(UNet2DConditionModel):
             nn.Linear(1280, 2048)
         )
         self.clip_text_proj = nn.Sequential(
-            nn.Linear(768, 512)
+            nn.Linear(768, 512),
+            nn.SiLU(),
+            nn.Linear(512, 512)
         )
         self.color_proj = nn.Sequential(
             nn.Linear(156, 512),
@@ -37,13 +39,6 @@ class ComposerUNet(UNet2DConditionModel):
             nn.Linear(512, 256),
             nn.SiLU(),
             nn.Linear(256, 320)
-            # nn.Linear(256, 128),
-            # nn.SiLU(),
-            # nn.Linear(128, 64),
-            # nn.SiLU(),
-            # nn.Linear(64, 16),
-            # nn.SiLU(),
-            # nn.Linear(16, 1)
         )
         self.clip_text_time_proj = nn.Sequential(
             nn.Conv1d(77, 64, 3, padding=1, stride=1),
@@ -53,26 +48,12 @@ class ComposerUNet(UNet2DConditionModel):
             nn.Linear(512, 256),
             nn.SiLU(),
             nn.Linear(256, 320)
-            # nn.Linear(256, 128),
-            # nn.SiLU(),
-            # nn.Linear(128, 64),
-            # nn.SiLU(),
-            # nn.Linear(64, 16),
-            # nn.SiLU(),
-            # nn.Linear(16, 1)
         )
         self.color_time_proj = nn.Sequential(
             nn.Conv1d(4, 1, 3, padding=1, stride=1),
             nn.Linear(512, 256),
             nn.SiLU(),
             nn.Linear(256, 320)
-            # nn.Linear(256, 128),
-            # nn.SiLU(),
-            # nn.Linear(128, 64),
-            # nn.SiLU(),
-            # nn.Linear(64, 16),
-            # nn.SiLU(),
-            # nn.Linear(16, 1)
         )
 
         # 视觉条件处理
@@ -100,38 +81,38 @@ class ComposerUNet(UNet2DConditionModel):
             image_features = self.clip_model.get_image_features(**image_inputs)
             text_features = self.clip_model.text_model(**text_inputs).last_hidden_state
 
-            # 处理图像和文本特征
-            B = image_features.size(0)
-            image_features = self.clip_image_proj(image_features)
-            image_features = image_features.view(B, 4, 512)
-            text_features = self.clip_text_proj(text_features)
-            color_features = self.color_proj(color)
-            color_features = color_features.view(B, 4, 512)
-            clip_context = torch.cat([image_features, text_features, color_features], dim=1)
-            clip_context = self.clip_proj(clip_context)
+        # 处理图像和文本特征
+        B = image_features.size(0)
+        image_features = self.clip_image_proj(image_features)
+        image_features = image_features.view(B, 4, 512)
+        text_features = self.clip_text_proj(text_features)
+        color_features = self.color_proj(color)
+        color_features = color_features.view(B, 4, 512)
+        clip_context = torch.cat([image_features, text_features, color_features], dim=1)
+        clip_context = self.clip_proj(clip_context)
 
-            # 第二部分：时间步融合
+        # 第二部分：时间步融合
 
-            clip_image_time_emb = self.clip_image_time_proj(image_features).view(B, 320)
-            clip_text_time_emb = self.clip_text_time_proj(text_features).view(B, 320)
-            color_time_emb = self.color_time_proj(color_features).view(B, 320)
-            timestep_cond = clip_image_time_emb + clip_text_time_emb + color_time_emb
+        clip_image_time_emb = self.clip_image_time_proj(image_features).view(B, 320)
+        clip_text_time_emb = self.clip_text_time_proj(text_features).view(B, 320)
+        color_time_emb = self.color_time_proj(color_features).view(B, 320)
+        timestep_cond = clip_image_time_emb + clip_text_time_emb + color_time_emb
 
-            # 第三部分：视觉条件处理
+        # 第三部分：视觉条件处理
 
-            condition_features = self.local_condition_proj(
-                sketch=sketch.to(sample.device),
-                instance=instance.to(sample.device),
-                depth=depth.to(sample.device),
-                intensity=intensity.to(sample.device)
-            )
-            local_condition = torch.zeros_like(sample)
-            for i in range(len(condition_features)):
-                local_condition += condition_features[i]
+        condition_features = self.local_condition_proj(
+            sketch=sketch.to(sample.device),
+            instance=instance.to(sample.device),
+            depth=depth.to(sample.device),
+            intensity=intensity.to(sample.device)
+        )
+        local_condition = torch.zeros_like(sample)
+        for i in range(len(condition_features)):
+            local_condition += condition_features[i]
 
-            # 第四部分：输入层融合
+        # 第四部分：输入层融合
 
-            combined_input = torch.cat([sample, local_condition], dim=1)
+        combined_input = torch.cat([sample, local_condition], dim=1)
 
         # 执行原始UNet前向传播
         return super().forward(combined_input,
@@ -147,24 +128,16 @@ class LocalConditionProj(nn.Module):
         # 多条件视觉特征提取
         self.condition_convs = nn.ModuleDict({
             'sketch': nn.Sequential(
-                nn.Conv2d(3, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1)
+                nn.Identity()
             ),
             'instance': nn.Sequential(
-                nn.Conv2d(3, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1)
+                nn.Identity()
             ),
             'depth': nn.Sequential(
-                nn.Conv2d(3, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1)
+                nn.Identity()
             ),
             'intensity': nn.Sequential(
-                nn.Conv2d(3, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1),
-                nn.Conv2d(4, 4, kernel_size=3, padding=1, stride=1)
+                nn.Identity()
             )
         })
 
@@ -268,7 +241,7 @@ class ComposerDataset(Dataset):
         ])
 
         self.feature_transform = transforms.Compose([
-            transforms.Resize((64, 64)),
+            transforms.Resize((512, 512)),
             transforms.ToTensor(),
             # 归一化CLIP参数
             transforms.Normalize(mean=[0.48145466, 0.4578275, 0.40821073],
@@ -293,7 +266,7 @@ class ComposerDataset(Dataset):
             path = os.path.join(
                 self.feature_dir,
                 feature_type,
-                f"{base_name}_{feature_type}.{'png'}"
+                f"{base_name}_{feature_type}.{'jpg'}"
             )
             return self.feature_transform(Image.open(path).convert("RGB"))
 
@@ -303,7 +276,7 @@ class ComposerDataset(Dataset):
             "prompt": self.caption_map[filename],
             "color": self.colors[idx],
             "sketch": load_feature("sketch"),
-            "instance": load_feature("segment"),
+            "instance": load_feature("instance"),
             "depth": load_feature("depth"),
             "intensity": load_feature("intensity")
         }

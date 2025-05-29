@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Error Mix" />
+    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="ERROR MIX">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ComposerPipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/ComposerPipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ComposerUnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/ComposerUnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_multi.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_multi.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,6 +65,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -112,7 +119,7 @@
       <workItem from="1748493366743" duration="25000" />
       <workItem from="1748502449483" duration="7866000" />
       <workItem from="1748539644128" duration="107000" />
-      <workItem from="1748539782219" duration="15000" />
+      <workItem from="1748539782219" duration="2549000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1747590484790</created>
@@ -359,7 +366,14 @@
       <option name="project" value="LOCAL" />
       <updated>1748533218806</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="ERROR MIX">
+      <created>1748539978491</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1748539978491</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -441,7 +455,8 @@
     <MESSAGE value="requirements.txt" />
     <MESSAGE value="README.md" />
     <MESSAGE value="Error Mix" />
-    <option name="LAST_COMMIT_MESSAGE" value="Error Mix" />
+    <MESSAGE value="ERROR MIX" />
+    <option name="LAST_COMMIT_MESSAGE" value="ERROR MIX" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Composer$load_and_save_test.coverage" NAME="load_and_save_test 覆盖结果" MODIFIED="1747366933428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

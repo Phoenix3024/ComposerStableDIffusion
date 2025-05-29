@@ -12,7 +12,7 @@ from ComposerPipeline import ComposerStableDiffusionPipeline
 def main():
     # 检测可用GPU数量
     num_gpus = torch.cuda.device_count()
-    # print(f"Found {num_gpus} GPU(s). Using DataParallel for training.")
+    print(f"Found {num_gpus} GPU(s). Using DataParallel for training.")
 
     # 加载模型
     composer_pipe = ComposerStableDiffusionPipeline.load_custom_pretrained(load_directory=None)
@@ -22,10 +22,10 @@ def main():
     composer_pipe.to(device)
     print(f"Pipeline loaded and moved to {device}.")
 
-    # # 使用DataParallel包装UNet
-    # if num_gpus > 1:
-    #     composer_pipe = nn.DataParallel(composer_pipe)
-    # composer_pipe = composer_pipe.module if isinstance(composer_pipe, nn.DataParallel) else composer_pipe
+    # 使用DataParallel包装UNet
+    if num_gpus > 1:
+        composer_pipe = nn.DataParallel(composer_pipe)
+    composer_pipe = composer_pipe.module if isinstance(composer_pipe, nn.DataParallel) else composer_pipe
 
     # 训练参数
     batch_size = 32 * num_gpus  # 总batch size = 单卡batch * GPU数量
@@ -93,11 +93,24 @@ def main():
 
             # 数据准备
             images = batch["image"].to(device, non_blocking=True)
+            sketch = batch["sketch"].to(device, non_blocking=True)
+            instance = batch["instance"].to(device, non_blocking=True)
+            depth = batch["depth"].to(device, non_blocking=True)
+            intensity = batch["intensity"].to(device, non_blocking=True)
 
             # VAE编码
             with torch.no_grad():
                 latents = composer_pipe.vae.encode(images).latent_dist.sample()
+                cond_sketch = composer_pipe.vae.encode(sketch).latent_dist.sample()
+                cond_instance = composer_pipe.vae.encode(instance).latent_dist.sample()
+                cond_depth = composer_pipe.vae.encode(depth).latent_dist.sample()
+                cond_intensity = composer_pipe.vae.encode(intensity).latent_dist.sample()
+
                 latents = latents * composer_pipe.vae.config.scaling_factor
+                cond_sketch = cond_sketch * composer_pipe.vae.config.scaling_factor
+                cond_instance = cond_instance * composer_pipe.vae.config.scaling_factor
+                cond_depth = cond_depth * composer_pipe.vae.config.scaling_factor
+                cond_intensity = cond_intensity * composer_pipe.vae.config.scaling_factor
 
             # 添加噪声
             noise = torch.randn_like(latents)
@@ -109,10 +122,10 @@ def main():
                 "image": batch["pixel_values"].to(device, non_blocking=True),
                 "prompt": batch["prompt"],
                 "color": batch["color"].to(device, non_blocking=True),
-                "sketch": batch["sketch"].to(device, non_blocking=True),
-                "instance": batch["instance"].to(device, non_blocking=True),
-                "depth": batch["depth"].to(device, non_blocking=True),
-                "intensity": batch["intensity"].to(device, non_blocking=True)
+                "sketch": cond_sketch,
+                "instance": cond_instance,
+                "depth": cond_depth,
+                "intensity": cond_intensity
             }
 
             # 前向传播
@@ -158,10 +171,23 @@ def main():
                 for val_batch in val_dataloader:
                     # 数据准备
                     val_images = val_batch["image"].to(device, non_blocking=True)
+                    val_sketch = val_batch["sketch"].to(device, non_blocking=True)
+                    val_instance = val_batch["instance"].to(device, non_blocking=True)
+                    val_depth = val_batch["depth"].to(device, non_blocking=True)
+                    val_intensity = val_batch["intensity"].to(device, non_blocking=True)
 
                     # VAE编码
                     val_latents = composer_pipe.vae.encode(val_images).latent_dist.sample()
+                    val_cond_sketch = composer_pipe.vae.encode(val_sketch).latent_dist.sample()
+                    val_cond_instance = composer_pipe.vae.encode(val_instance).latent_dist.sample()
+                    val_cond_depth = composer_pipe.vae.encode(val_depth).latent_dist.sample()
+                    val_cond_intensity = composer_pipe.vae.encode(val_intensity).latent_dist.sample()
+
                     val_latents = val_latents * composer_pipe.vae.config.scaling_factor
+                    val_cond_sketch = val_cond_sketch * composer_pipe.vae.config.scaling_factor
+                    val_cond_instance = val_cond_instance * composer_pipe.vae.config.scaling_factor
+                    val_cond_depth = val_cond_depth * composer_pipe.vae.config.scaling_factor
+                    val_cond_intensity = val_cond_intensity * composer_pipe.vae.config.scaling_factor
 
                     # 添加噪声
                     val_noise = torch.randn_like(val_latents)
@@ -173,10 +199,10 @@ def main():
                         "image": val_batch["pixel_values"].to(device, non_blocking=True),
                         "prompt": val_batch["prompt"],
                         "color": val_batch["color"].to(device, non_blocking=True),
-                        "sketch": val_batch["sketch"].to(device, non_blocking=True),
-                        "instance": val_batch["instance"].to(device, non_blocking=True),
-                        "depth": val_batch["depth"].to(device, non_blocking=True),
-                        "intensity": val_batch["intensity"].to(device, non_blocking=True)
+                        "sketch": val_cond_sketch,
+                        "instance": val_cond_instance,
+                        "depth": val_cond_depth,
+                        "intensity": val_cond_intensity
                     }
 
                     # 前向传播（带guidance）

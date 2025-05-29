@@ -62,10 +62,13 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         - image: PIL Image or tensor to extract CLIP features
         - color, sketch, instance, depth, intensity: tensors for local conditioning
         """
+        # 获取设备信息
+        device = self.device
 
-        batch_size = image.shape[0]
+        # 确定batch size
+        batch_size = pixel_values.shape[0] if isinstance(pixel_values, torch.Tensor) else 1
 
-        # Prepare latent noise
+        # 准备初始噪声
         if isinstance(image, Image.Image):
             width, height = image.size
         elif isinstance(image, torch.Tensor):
@@ -75,42 +78,84 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
 
         latents = torch.randn(
             (batch_size, self.unet.in_channels, height // 8, width // 8),
-            device=self.device,
-            dtype=image.dtype,
+            device=device,
+            dtype=torch.float32,
         )
         latents = latents * self.scheduler.init_noise_sigma
 
-        # Set timesteps
-        self.scheduler.set_timesteps(num_inference_steps, device=self.device)
+        # 设置时间步
+        self.scheduler.set_timesteps(num_inference_steps, device=device)
 
-        # Diffusion process
+        # 准备CFG所需的无条件输入
+        def create_uncond_input(input_tensor):
+            if input_tensor is None:
+                return None
+            if isinstance(input_tensor, torch.Tensor):
+                return torch.zeros_like(input_tensor)
+            elif isinstance(input_tensor, list):
+                return [""] * len(input_tensor)
+            return None
+
+        uncond_pixel_values = create_uncond_input(pixel_values)
+        uncond_color = create_uncond_input(color)
+        uncond_sketch = create_uncond_input(sketch)
+        uncond_instance = create_uncond_input(instance)
+        uncond_depth = create_uncond_input(depth)
+        uncond_intensity = create_uncond_input(intensity)
+        uncond_prompt = [""] * batch_size if isinstance(prompt, list) else ""
+
+        # 扩散过程
         for t in self.scheduler.timesteps:
+            # 扩展latents用于CFG
+            latent_model_input = torch.cat([latents] * 2)
+            latent_model_input = self.scheduler.scale_model_input(latent_model_input, t)
+
+            # 准备条件输入（原始条件+无条件）
+            cond_pixel_values = torch.cat([pixel_values, uncond_pixel_values]) if pixel_values is not None else None
+            cond_color = torch.cat([color, uncond_color]) if color is not None else None
+            cond_sketch = torch.cat([sketch, uncond_sketch]) if sketch is not None else None
+            cond_instance = torch.cat([instance, uncond_instance]) if instance is not None else None
+            cond_depth = torch.cat([depth, uncond_depth]) if depth is not None else None
+            cond_intensity = torch.cat([intensity, uncond_intensity]) if intensity is not None else None
+
+            # 处理文本提示
+            if isinstance(prompt, list):
+                cond_prompt = prompt + uncond_prompt
+            else:
+                cond_prompt = [prompt] * batch_size + [uncond_prompt]
+
+            # 预测噪声
             noise_pred = self.unet(
-                latents,
+                latent_model_input,
                 t,
-                encoder_hidden_states=None,  # 使用CLIP生成的新context
-                image=pixel_values,
-                prompt=prompt,
-                color=color,
-                sketch=sketch,
-                instance=instance,
-                depth=depth,
-                intensity=intensity,
+                encoder_hidden_states=None,
+                image=cond_pixel_values,
+                prompt=cond_prompt,
+                color=cond_color,
+                sketch=cond_sketch,
+                instance=cond_instance,
+                depth=cond_depth,
+                intensity=cond_intensity,
             )[0]
 
-            # Apply classifier-free guidance
-            noise_pred_uncond, noise_pred_cond = noise_pred.chunk(2, dim=0)
+            # 应用分类器自由引导(CFG)
+            noise_pred_uncond, noise_pred_cond = noise_pred.chunk(2)
             noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_cond - noise_pred_uncond)
-            # print(f"noise_pred shape: {noise_pred.shape},latents shape: {latents.shape}")
 
-            # Compute previous noisy sample x_{t-1}
-            latents = self.scheduler.step(noise_pred, t, latents, return_dict=False)[0]
+            # 计算前一个噪声样本 x_{t-1}
+            latents = self.scheduler.step(noise_pred, t, latents).prev_sample
 
-        recon_image = self.vae.decode(latents / self.vae.config.scaling_factor, return_dict=False, generator=None)[0]
-        do_denormalize = [True] * recon_image.shape[0]
-        recon_image = self.image_processor.postprocess(recon_image, output_type="pil", do_denormalize=do_denormalize)
+        # 解码latents为图像
+        latents = 1 / self.vae.config.scaling_factor * latents
+        image = self.vae.decode(latents).sample
 
-        return {"images": recon_image}
+        # 后处理
+        image = (image / 2 + 0.5).clamp(0, 1)
+        image = image.cpu().permute(0, 2, 3, 1).float().numpy()
+        images = (image * 255).round().astype("uint8")
+        images = [Image.fromarray(img) for img in images]
+
+        return {"images": images}
 
     def save_custom_pretrained(self, save_directory: str):
         os.makedirs(save_directory, exist_ok=True)

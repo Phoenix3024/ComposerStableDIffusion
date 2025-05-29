@@ -77,7 +77,7 @@ class FeatureGenerator:
 
         return {
             "depth": to_3channels(get_depth_map(image_rgb, self.depth_model, self.depth_transform, self.device)),
-            "segment": to_3channels(get_segmentation_mask(image_rgb, self.segmenter)),
+            "instance": to_3channels(get_segmentation_mask(image_rgb, self.segmenter)),
             "sketch": to_3channels(sketch_map),
             "intensity": to_3channels(self.intensity_gen.get_intensity(image_rgb))
         }
@@ -115,7 +115,7 @@ class FeatureGenerator:
     def _save_results(self, results, img_path, input_root, output_root):
         rel_path = os.path.relpath(img_path, input_root)
         base_name = os.path.splitext(rel_path)[0]
-        for feature in ['depth', 'segment', 'sketch', 'intensity']:
+        for feature in ['depth', 'instance', 'sketch', 'intensity']:
             output_dir = os.path.join(output_root, feature, os.path.dirname(rel_path))
             os.makedirs(output_dir, exist_ok=True)
             cv2.imwrite(os.path.join(output_dir, base_name + f'_{feature}.jpg'), results[feature])
