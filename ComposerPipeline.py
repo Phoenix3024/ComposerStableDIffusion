@@ -7,15 +7,99 @@ from diffusers.image_processor import VaeImageProcessor
 from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
 from diffusers.schedulers import KarrasDiffusionSchedulers
 from diffusers.utils import logging
-from transformers import CLIPTextModel, CLIPTokenizer, CLIPImageProcessor
 from torch import nn
+from transformers import CLIPTextModel, CLIPTokenizer, CLIPImageProcessor
 
 from ComposerUnet import ComposerUNet
 
 
+class LocalConditionProj(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # 多条件视觉特征提取
+        self.condition_convs = nn.ModuleDict({
+            'sketch': nn.Sequential(
+                nn.Identity()
+            ),
+            'instance': nn.Sequential(
+                nn.Identity()
+            ),
+            'depth': nn.Sequential(
+                nn.Identity()
+            ),
+            'intensity': nn.Sequential(
+                nn.Identity()
+            )
+        })
+
+    def dropout_conditions(self, sketch, instance, depth, intensity):
+        """
+        对四个条件张量应用自定义的 Dropout 策略，并返回新的张量列表 [sketch', instance', depth', intensity']。
+        - sketch、instance、depth 独立以 0.5 概率丢弃
+        - intensity 以 0.7 概率丢弃
+        - 0.1 概率丢弃所有条件，0.1 概率保留所有条件
+        """
+        device = sketch.device  # 确保在相同设备上生成随机数
+        rand = torch.rand(1, device=device).item()  # 随机判断是否全丢弃或全保留
+
+        if rand < 0.1:
+            # 以0.1概率丢弃所有条件
+            return [
+                torch.zeros_like(sketch),
+                torch.zeros_like(instance),
+                torch.zeros_like(depth),
+                torch.zeros_like(intensity)
+            ]
+        elif rand < 0.2:
+            # 以0.1概率保留所有条件
+            return [
+                sketch.clone(),
+                instance.clone(),
+                depth.clone(),
+                intensity.clone()
+            ]
+        else:
+            # 其他情况下独立决策是否丢弃每个条件
+            drop_sketch = torch.rand(1, device=device).item() < 0.5
+            drop_instance = torch.rand(1, device=device).item() < 0.5
+            drop_depth = torch.rand(1, device=device).item() < 0.5
+            drop_intensity = torch.rand(1, device=device).item() < 0.7
+
+            # 如果标志为 True 则置零，否则返回原张量的克隆
+            new_sketch = torch.zeros_like(sketch) if drop_sketch else sketch.clone()
+            new_instance = torch.zeros_like(instance) if drop_instance else instance.clone()
+            new_depth = torch.zeros_like(depth) if drop_depth else depth.clone()
+            new_intensity = torch.zeros_like(intensity) if drop_intensity else intensity.clone()
+
+            return [new_sketch, new_instance, new_depth, new_intensity]
+
+    def forward(self, sketch, instance, depth, intensity):
+        # 处理各条件特征
+        local_conds = {
+            'sketch': sketch,
+            'instance': instance,
+            'depth': depth,
+            'intensity': intensity
+        }
+
+        condition_features = []
+        for name, conv in self.condition_convs.items():
+            feat = conv(local_conds[name])
+            condition_features.append(feat)
+
+        new_condition_features = self.dropout_conditions(
+            condition_features[0],
+            condition_features[1],
+            condition_features[2],
+            condition_features[3]
+        )
+
+        return new_condition_features
+
+
 class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
     """
-    Custom Stable Diffusion pipeline that integrates a MegaConditionUNet combining CLIP image/text features
+    Custom Stable Diffusion pipeline that integrates a ConditionUNet combining CLIP text features
     with additional local conditions (color, sketch, instance, depth, intensity).
     """
 
@@ -42,6 +126,32 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         self.vae_scale_factor = 2 ** (len(self.vae.config.block_out_channels) - 1)
         self.image_processor = VaeImageProcessor(vae_scale_factor=self.vae_scale_factor)
 
+        self.color_proj = nn.Sequential(
+            nn.Linear(156, 512),
+            nn.SiLU(),
+            nn.Linear(512, 2048),
+            nn.SiLU(),
+            nn.Linear(2048, 768 * 4)
+        )
+        self.clip_text_time_proj = nn.Sequential(
+            nn.Conv1d(77, 64, 3, padding=1, stride=1),
+            nn.Conv1d(64, 32, 3, padding=1, stride=1),
+            nn.Conv1d(32, 16, 3, padding=1, stride=1),
+            nn.Conv1d(16, 1, 3, padding=1, stride=1),
+            nn.Linear(512, 256),
+            nn.SiLU(),
+            nn.Linear(256, 320)
+        )
+        self.color_time_proj = nn.Sequential(
+            nn.Conv1d(4, 1, 3, padding=1, stride=1),
+            nn.Linear(512, 256),
+            nn.SiLU(),
+            nn.Linear(256, 320)
+        )
+
+        # 视觉条件处理
+        self.local_condition_proj = LocalConditionProj()
+
     @torch.no_grad()
     def __call__(
             self,
@@ -59,7 +169,6 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         """
         Generate an image conditioned on text prompt and additional inputs:
         - prompt: text string
-        - image: PIL Image or tensor to extract CLIP features
         - color, sketch, instance, depth, intensity: tensors for local conditioning
         """
         # 获取设备信息
@@ -83,6 +192,33 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         )
         latents = latents * self.scheduler.init_noise_sigma
 
+        prompt = self.tokenizer(
+            prompt,
+            padding="max_length",
+            max_length=self.tokenizer.model_max_length,
+            truncation=True,
+            return_tensors="pt"
+        ).input_ids.to(device)
+        prompt = self.text_encoder(prompt)[0]
+        uncond_prompt = [""] * batch_size if isinstance(prompt, list) else ""
+        uncond_prompt = self.tokenizer(
+            uncond_prompt,
+            padding="max_length",
+            max_length=self.tokenizer.model_max_length,
+            truncation=True,
+            return_tensors="pt"
+        ).input_ids.to(device)
+        uncond_prompt = self.text_encoder(uncond_prompt)[0]
+        color = self.color_proj(color)
+        sketch = self.vae.encode(sketch).latent_dist.sample()
+        sketch = sketch * self.vae.config.scaling_factor
+        instance = self.vae.encode(instance).latent_dist.sample()
+        instance = instance * self.vae.config.scaling_factor
+        depth = self.vae.encode(depth).latent_dist.sample()
+        depth = depth * self.vae.config.scaling_factor
+        intensity = self.vae.encode(intensity).latent_dist.sample()
+        intensity = intensity * self.vae.config.scaling_factor
+
         # 设置时间步
         self.scheduler.set_timesteps(num_inference_steps, device=device)
 
@@ -96,13 +232,8 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
                 return [""] * len(input_tensor)
             return None
 
-        uncond_pixel_values = create_uncond_input(pixel_values)
         uncond_color = create_uncond_input(color)
-        uncond_sketch = create_uncond_input(sketch)
-        uncond_instance = create_uncond_input(instance)
-        uncond_depth = create_uncond_input(depth)
-        uncond_intensity = create_uncond_input(intensity)
-        uncond_prompt = [""] * batch_size if isinstance(prompt, list) else ""
+        B = batch_size
 
         # 扩散过程
         for t in self.scheduler.timesteps:
@@ -111,31 +242,37 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
             latent_model_input = self.scheduler.scale_model_input(latent_model_input, t)
 
             # 准备条件输入（原始条件+无条件）
-            cond_pixel_values = torch.cat([pixel_values, uncond_pixel_values]) if pixel_values is not None else None
-            cond_color = torch.cat([color, uncond_color]) if color is not None else None
-            cond_sketch = torch.cat([sketch, uncond_sketch]) if sketch is not None else None
-            cond_instance = torch.cat([instance, uncond_instance]) if instance is not None else None
-            cond_depth = torch.cat([depth, uncond_depth]) if depth is not None else None
-            cond_intensity = torch.cat([intensity, uncond_intensity]) if intensity is not None else None
+            time_cond_prompt = self.clip_text_time_proj(prompt).view(B, 320)
+            time_cond_color = self.color_time_proj(color).view(B, 320)
+            time_cond_uncond_prompt = self.clip_text_time_proj(uncond_prompt).view(B, 320)
+            time_cond_uncond_color = self.color_time_proj(uncond_color).view(B, 320)
+            time_cond = time_cond_prompt + time_cond_color + time_cond_uncond_prompt + time_cond_uncond_color
 
-            # 处理文本提示
-            if isinstance(prompt, list):
-                cond_prompt = prompt + uncond_prompt
-            else:
-                cond_prompt = [prompt] * batch_size + [uncond_prompt]
+            cond_prompt = torch.cat([prompt, uncond_prompt])
+            cond_color = torch.cat([color, uncond_color])
+            cond_encoder_hidden_states = torch.cat([cond_prompt, cond_color], dim=1)
+            cond_sketch = torch.cat([sketch] * 2)
+            cond_instance = torch.cat([instance] * 2)
+            cond_depth = torch.cat([depth] * 2)
+            cond_intensity = torch.cat([intensity] * 2)
+            cond_local_conditions = self.local_condition_proj(
+                sketch=cond_sketch,
+                instance=cond_instance,
+                depth=cond_depth,
+                intensity=cond_intensity
+            )
+            local_conditions = torch.zeros_like(latent_model_input)
+            for i in range(len(cond_local_conditions)):
+                local_conditions += cond_local_conditions[i]
+
+            latent_model_input = torch.cat([latent_model_input, local_conditions], dim=1)
 
             # 预测噪声
             noise_pred = self.unet(
                 latent_model_input,
                 t,
-                encoder_hidden_states=None,
-                image=cond_pixel_values,
-                prompt=cond_prompt,
-                color=cond_color,
-                sketch=cond_sketch,
-                instance=cond_instance,
-                depth=cond_depth,
-                intensity=cond_intensity,
+                encoder_hidden_states=cond_encoder_hidden_states,
+                timestep_cond=time_cond
             )[0]
 
             # 应用分类器自由引导(CFG)
