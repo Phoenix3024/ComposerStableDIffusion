@@ -93,6 +93,7 @@ def main():
 
             # 数据准备
             images = batch["image"].to(device, non_blocking=True)
+            pixel_values = batch["pixel_values"].to(device, non_blocking=True)
             prompt = batch["prompt"]
             color = batch["color"].to(device, non_blocking=True)
             sketch = batch["sketch"].to(device, non_blocking=True)
@@ -101,6 +102,11 @@ def main():
             intensity = batch["intensity"].to(device, non_blocking=True)
 
             # 第一部分：CLIP融合条件
+
+            # 处理图像
+            pixel_values = composer_pipe.clip_processor(images=pixel_values, return_tensors="pt", padding=True,
+                                                        do_rescale=False).to(device)
+            pixel_values_features = composer_pipe.clip_model.get_image_features(**pixel_values)
 
             # 处理文本
             text_inputs = composer_pipe.tokenizer(text=prompt, return_tensors="pt", padding="max_length",
@@ -132,15 +138,15 @@ def main():
 
             # 处理图像和文本特征
             B = text_features.shape[0]
-            text_features = composer_pipe.clip_text_proj(text_features)
             color_features = composer_pipe.color_proj(color)
             color_features = color_features.view(B, 4, 768)
-            clip_context = torch.cat([text_features, color_features], dim=1)
+            clip_context = torch.cat([pixel_values_features, text_features, color_features], dim=1)
 
             # 第二部分：时间步融合
+            clip_image_time_emb = composer_pipe.clip_image_time_proj(pixel_values_features).view(B, 320)
             clip_text_time_emb = composer_pipe.clip_text_time_proj(text_features).view(B, 320)
             color_time_emb = composer_pipe.color_time_proj(color_features).view(B, 320)
-            timestep_cond = clip_text_time_emb + color_time_emb
+            timestep_cond = clip_image_time_emb + clip_text_time_emb + color_time_emb
 
             # 第三部分：视觉条件处理
 
@@ -201,6 +207,7 @@ def main():
                 for val_batch in val_dataloader:
                     # 数据准备
                     val_images = val_batch["image"].to(device, non_blocking=True)
+                    val_pixel_values = val_batch["pixel_values"].to(device, non_blocking=True)
                     val_color = val_batch["color"].to(device, non_blocking=True)
                     val_prompt = val_batch["prompt"]
                     val_sketch = val_batch["sketch"].to(device, non_blocking=True)
@@ -210,10 +217,17 @@ def main():
 
                     # VAE编码
                     val_latents = composer_pipe.vae.encode(val_images).latent_dist.sample()
+                    val_cond_pixel_values = composer_pipe.clip_processor(
+                        images=val_pixel_values, return_tensors="pt", padding=True, do_rescale=False).to(device)
+                    val_pixel_values_features = composer_pipe.clip_model.get_image_features(
+                        **val_cond_pixel_values)
+
                     val_cond_text = composer_pipe.tokenizer(text=val_prompt, return_tensors="pt", padding="max_length",
                                                             max_length=77, truncation=True).to(device)
                     val_cond_text_features = composer_pipe.text_encoder(val_cond_text.input_ids.to(device))[0]
+
                     val_cond_color = composer_pipe.color_proj(val_color).view(val_color.shape[0], 4, 768)
+
                     val_cond_sketch = composer_pipe.vae.encode(val_sketch).latent_dist.sample()
                     val_cond_instance = composer_pipe.vae.encode(val_instance).latent_dist.sample()
                     val_cond_depth = composer_pipe.vae.encode(val_depth).latent_dist.sample()
@@ -229,16 +243,22 @@ def main():
                     val_noise = torch.randn_like(val_latents)
                     val_timesteps = torch.randint(0, num_train_steps, (val_latents.shape[0],), device=device).long()
                     val_noisy_latents = composer_pipe.scheduler.add_noise(val_latents, val_noise, val_timesteps)
+
+                    # 准备timestep条件输入
+                    val_time_cond_image = composer_pipe.clip_image_time_proj(val_pixel_values_features).view(
+                        val_pixel_values_features.shape[0], 320
+                    )
                     val_time_cond_text = composer_pipe.clip_text_time_proj(val_cond_text_features).view(
                         val_cond_text_features.shape[0], 320
                     )
                     val_time_cond_color = composer_pipe.color_time_proj(val_cond_color).view(
                         val_cond_color.shape[0], 320
                     )
-                    val_timesteps_cond = val_time_cond_text + val_time_cond_color
+                    val_timesteps_cond = val_time_cond_image + val_time_cond_text + val_time_cond_color
 
                     # 准备条件输入
                     val_cond_inputs = {
+                        "pixel_values": val_cond_pixel_values,
                         "prompt": val_cond_text_features,
                         "color": val_cond_color,
                         "time_cond": val_timesteps_cond,
@@ -269,6 +289,7 @@ def main():
                     )
                     duplicated_noisy_latents = torch.cat([duplicated_noisy_latents, val_local_condition], dim=1)
                     val_encoder_hidden_states = torch.cat([
+                        duplicated_cond_inputs["pixel_values"],
                         duplicated_cond_inputs["prompt"],
                         duplicated_cond_inputs["color"]
                     ], dim=1)

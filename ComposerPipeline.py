@@ -8,7 +8,7 @@ from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
 from diffusers.schedulers import KarrasDiffusionSchedulers
 from diffusers.utils import logging
 from torch import nn
-from transformers import CLIPTextModel, CLIPTokenizer, CLIPImageProcessor
+from transformers import CLIPTextModel, CLIPTokenizer, CLIPImageProcessor, CLIPModel, CLIPProcessor
 
 from ComposerUnet import ComposerUNet
 
@@ -126,6 +126,10 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         self.vae_scale_factor = 2 ** (len(self.vae.config.block_out_channels) - 1)
         self.image_processor = VaeImageProcessor(vae_scale_factor=self.vae_scale_factor)
 
+        # CLIP融合模块
+        self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14", cache_dir='data/pretrain_models')
+        self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14",
+                                                            cache_dir='data/pretrain_models')
         self.color_proj = nn.Sequential(
             nn.Linear(156, 512),
             nn.SiLU(),
@@ -133,18 +137,25 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
             nn.SiLU(),
             nn.Linear(2048, 768 * 4)
         )
+        self.clip_image_time_proj = nn.Sequential(
+            nn.Conv1d(4, 1, 3, padding=1, stride=1),
+            nn.Linear(768, 256),
+            nn.SiLU(),
+            nn.Linear(256, 320)
+        )
+
         self.clip_text_time_proj = nn.Sequential(
             nn.Conv1d(77, 64, 3, padding=1, stride=1),
             nn.Conv1d(64, 32, 3, padding=1, stride=1),
             nn.Conv1d(32, 16, 3, padding=1, stride=1),
             nn.Conv1d(16, 1, 3, padding=1, stride=1),
-            nn.Linear(512, 256),
+            nn.Linear(768, 256),
             nn.SiLU(),
             nn.Linear(256, 320)
         )
         self.color_time_proj = nn.Sequential(
             nn.Conv1d(4, 1, 3, padding=1, stride=1),
-            nn.Linear(512, 256),
+            nn.Linear(768, 256),
             nn.SiLU(),
             nn.Linear(256, 320)
         )
@@ -192,6 +203,10 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         )
         latents = latents * self.scheduler.init_noise_sigma
 
+        pixel_values = self.clip_processor(images=pixel_values, return_tensors="pt", padding=True, do_rescale=False).to(
+            device)
+        pixel_values = self.clip_model.get_image_features(**pixel_values)
+
         prompt = self.tokenizer(
             prompt,
             padding="max_length",
@@ -232,6 +247,7 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
                 return [""] * len(input_tensor)
             return None
 
+        uncond_pixel_values = create_uncond_input(pixel_values)
         uncond_color = create_uncond_input(color)
         B = batch_size
 
@@ -242,19 +258,25 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
             latent_model_input = self.scheduler.scale_model_input(latent_model_input, t)
 
             # 准备条件输入（原始条件+无条件）
+            time_cond_pixel_values = self.clip_image_time_proj(pixel_values).view(B, 320)
             time_cond_prompt = self.clip_text_time_proj(prompt).view(B, 320)
             time_cond_color = self.color_time_proj(color).view(B, 320)
+            time_cond_uncond_pixel_values = self.clip_image_time_proj(uncond_pixel_values).view(B, 320)
             time_cond_uncond_prompt = self.clip_text_time_proj(uncond_prompt).view(B, 320)
             time_cond_uncond_color = self.color_time_proj(uncond_color).view(B, 320)
-            time_cond = time_cond_prompt + time_cond_color + time_cond_uncond_prompt + time_cond_uncond_color
+            time_cond = time_cond_pixel_values + time_cond_uncond_pixel_values + time_cond_prompt + time_cond_color + time_cond_uncond_prompt + time_cond_uncond_color
 
+            cond_pixel_values = torch.cat([pixel_values, uncond_pixel_values])
             cond_prompt = torch.cat([prompt, uncond_prompt])
             cond_color = torch.cat([color, uncond_color])
-            cond_encoder_hidden_states = torch.cat([cond_prompt, cond_color], dim=1)
+            cond_encoder_hidden_states = torch.cat([cond_pixel_values, cond_prompt, cond_color], dim=1)
+
             cond_sketch = torch.cat([sketch] * 2)
             cond_instance = torch.cat([instance] * 2)
             cond_depth = torch.cat([depth] * 2)
             cond_intensity = torch.cat([intensity] * 2)
+
+            # 处理视觉条件
             cond_local_conditions = self.local_condition_proj(
                 sketch=cond_sketch,
                 instance=cond_instance,
@@ -265,6 +287,7 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
             for i in range(len(cond_local_conditions)):
                 local_conditions += cond_local_conditions[i]
 
+            # 将视觉条件与latents合并
             latent_model_input = torch.cat([latent_model_input, local_conditions], dim=1)
 
             # 预测噪声
