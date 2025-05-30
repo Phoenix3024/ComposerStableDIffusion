@@ -330,7 +330,7 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
                                                   subfolder="scheduler")
 
         # 构造并加载自定义 UNet
-        base_unet = UNet2DConditionModel.from_pretrained(base_unet_model_id, cache_dir='data/pretrain_models',
+        base_unet = UNet2DConditionModel.from_pretrained(load_directory, cache_dir='data/pretrain_models',
                                                          subfolder="unet")
 
         for config in base_unet.config.keys():
