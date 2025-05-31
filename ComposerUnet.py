@@ -37,7 +37,7 @@ class ComposerUNet(UNet2DConditionModel):
                                timestep=timestep,
                                encoder_hidden_states=encoder_hidden_states,
                                timestep_cond=timestep_cond,
-                               return_dict=False)
+                               return_dict=True)
 
 
 class ComposerDataset(Dataset):
