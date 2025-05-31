@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Pipeline Mix" />
+    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Pipeline Mix">
+      <change beforePath="$PROJECT_DIR$/Intensity.py" beforeDir="false" afterPath="$PROJECT_DIR$/Intensity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MiDaS_master/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/MiDaS_master/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pidinet_master/edge_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/pidinet_master/edge_detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/segment_anything_main/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/segment_anything_main/test.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -116,7 +121,7 @@
       <workItem from="1748539782219" duration="3354000" />
       <workItem from="1748617514741" duration="4624000" />
       <workItem from="1748624877085" duration="1137000" />
-      <workItem from="1748679607334" duration="11085000" />
+      <workItem from="1748679607334" duration="11478000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1747590484790</created>
@@ -405,7 +410,14 @@
       <option name="project" value="LOCAL" />
       <updated>1748692045675</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Pipeline Mix">
+      <created>1748692112255</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1748692112255</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
