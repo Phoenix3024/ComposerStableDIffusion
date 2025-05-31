@@ -9,6 +9,7 @@ from models import pidinet
 from models.convert_pidinet import convert_pidinet
 from models.pidinet import pidinet_converted
 
+
 class EdgeDetector:
     def __init__(self, checkpoint_path="trained_models/table7_pidinet.pth", config='carv4'):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -52,7 +53,7 @@ class EdgeDetector:
             edge_map = torch.squeeze(outputs[-1].cpu()).numpy()
 
         edge_map = (edge_map * 255).astype(np.uint8)
-        edge_map = cv2.resize(edge_map, (64, 64))
+        edge_map = cv2.resize(edge_map, (512, 512))
         return edge_map
 
 
