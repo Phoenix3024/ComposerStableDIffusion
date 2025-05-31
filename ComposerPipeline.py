@@ -183,6 +183,7 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         # 获取设备信息
         device = self.device
         dtype = self.text_encoder.dtype
+        self.local_condition_proj.eval()
 
         # 确定batch size
         batch_size = pixel_values.shape[0] if isinstance(pixel_values, torch.Tensor) else 1
@@ -203,7 +204,6 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
         latents = latents * self.scheduler.init_noise_sigma
 
         # 使用pipeline自带的CLIP处理pixel_values
-        # 注意：pixel_values应该是归一化后的图像张量 [batch, 3, H, W]
         with torch.no_grad():
             # 处理有条件输入
             pixel_values = pixel_values.to(device, dtype=dtype)
@@ -219,23 +219,11 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
             ).to(device)
             text_embeddings = self.text_encoder(text_inputs.input_ids)[0]
 
-            # 处理无条件输入
-            uncond_input = self.tokenizer(
-                [""] * batch_size,
-                padding="max_length",
-                max_length=self.tokenizer.model_max_length,
-                truncation=True,
-                return_tensors="pt"
-            ).to(device)
-            uncond_embeddings = self.text_encoder(uncond_input.input_ids)[0]
-
         # 处理CLIP图像条件
-        clip_image_embeds = clip_image_embeds.unsqueeze(1)  # 添加通道维度
-        clip_image_embeds = self.clip_image_proj(
-            clip_image_embeds.to(dtype)
-        )
+        B = clip_image_embeds.shape[0]
+        clip_image_embeds = self.clip_image_proj(clip_image_embeds.to(dtype)).view(B, 4, 768)
         # 处理颜色条件
-        color = self.color_proj(color.to(dtype))
+        color = self.color_proj(color.to(dtype)).view(B, 4, 768)
 
         # 编码视觉条件
         def encode_visual_condition(cond):
