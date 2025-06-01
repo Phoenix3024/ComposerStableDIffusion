@@ -49,7 +49,6 @@ def validation_step(model, val_dataloader, device, guidance_scale=7.5):
         model.module.vae.eval()
         model.module.text_encoder.eval()
         model.module.image_encoder.eval()
-        model.module.scheduler.eval()
     else:
         model.unet.eval()
         model.clip_image_proj.eval()
@@ -61,7 +60,6 @@ def validation_step(model, val_dataloader, device, guidance_scale=7.5):
         model.vae.eval()
         model.text_encoder.eval()
         model.image_encoder.eval()
-        model.scheduler.eval()
 
     val_loss = 0.0
     num_batches = 0
