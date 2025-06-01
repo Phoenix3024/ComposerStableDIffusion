@@ -422,7 +422,7 @@ def main():
             epoch_pbar.set_postfix({
                 'batch_loss': f"{loss.item():.4f}",
                 'avg_loss': f"{avg_loss:.4f}",
-                'lr': f"{lr_scheduler.get_last_lr()[0]:.2e}"
+                'lr': f"{lr_scheduler.get_last_lr()[0]}"
             })
             epoch_pbar.update()
 

@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Pipeline Infer Mix">
+    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Load Mix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ComposerPipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/ComposerPipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TrainMultiTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/TrainMultiTest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +121,9 @@
       <workItem from="1748624877085" duration="1137000" />
       <workItem from="1748679607334" duration="12399000" />
       <workItem from="1748706177862" duration="156000" />
-      <workItem from="1748748052054" duration="688000" />
+      <workItem from="1748748052054" duration="715000" />
+      <workItem from="1748752742164" duration="597000" />
+      <workItem from="1748762009212" duration="374000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1747590484790</created>
@@ -438,7 +440,14 @@
       <option name="project" value="LOCAL" />
       <updated>1748697688585</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Load Mix">
+      <created>1748751170983</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1748751170983</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -500,7 +509,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Test Change" />
     <MESSAGE value="Local Condition Change" />
     <MESSAGE value="Train Change" />
     <MESSAGE value="Global Condition" />
@@ -525,7 +533,8 @@
     <MESSAGE value="Pipeline Mix" />
     <MESSAGE value="Feature Map Size Mix" />
     <MESSAGE value="Pipeline Infer Mix" />
-    <option name="LAST_COMMIT_MESSAGE" value="Pipeline Infer Mix" />
+    <MESSAGE value="Load Mix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Load Mix" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Composer$load_and_save_test.coverage" NAME="load_and_save_test 覆盖结果" MODIFIED="1747366933428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
