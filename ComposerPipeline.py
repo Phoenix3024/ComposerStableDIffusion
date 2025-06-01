@@ -359,7 +359,7 @@ class ComposerStableDiffusionPipeline(StableDiffusionPipeline):
                                                   cache_dir="data/pretrained_models/")
 
         # 构造并加载自定义 UNet
-        base_unet = UNet2DConditionModel.from_pretrained(load_directory, subfolder="unet")
+        base_unet = UNet2DConditionModel.from_pretrained(load_directory, subfolder="unet", cache_dir="data/pretrained_models/")
 
         # 修改配置以匹配自定义UNet
         unet_config = base_unet.config
