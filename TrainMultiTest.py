@@ -37,7 +37,32 @@ def setup_logging(exp_name):
 
 def validation_step(model, val_dataloader, device, guidance_scale=7.5):
     """执行验证步骤，包括CFG推理"""
-    model.eval()
+    num_gpus = torch.cuda.device_count()
+    if num_gpus > 1:
+        model.module.unet.eval()
+        model.module.clip_image_proj.eval()
+        model.module.color_proj.eval()
+        model.module.clip_image_time_proj.eval()
+        model.module.clip_text_time_proj.eval()
+        model.module.color_time_proj.eval()
+        model.module.local_condition_proj.eval()
+        model.module.vae.eval()
+        model.module.text_encoder.eval()
+        model.module.image_encoder.eval()
+        model.module.scheduler.eval()
+    else:
+        model.unet.eval()
+        model.clip_image_proj.eval()
+        model.color_proj.eval()
+        model.clip_image_time_proj.eval()
+        model.clip_text_time_proj.eval()
+        model.color_time_proj.eval()
+        model.local_condition_proj.eval()
+        model.vae.eval()
+        model.text_encoder.eval()
+        model.image_encoder.eval()
+        model.scheduler.eval()
+
     val_loss = 0.0
     num_batches = 0
 
@@ -177,9 +202,9 @@ def main():
         logging.info(f"Using DataParallel on {num_gpus} GPUs.")
 
     # 训练参数
-    batch_size = 4 * num_gpus  # 每个GPU的batch size
+    batch_size = 32 * num_gpus  # 每个GPU的batch size
     num_epochs = 100
-    validation_interval = 3  # 每3个epoch验证一次
+    validation_interval = 1  # 每1个epoch验证一次
     guidance_scale = 7.5  # Classifier-free guidance系数
 
     # 数据集

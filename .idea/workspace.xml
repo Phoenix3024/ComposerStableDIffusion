@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Load Mix">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TrainMultiTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/TrainMultiTest.py" afterDir="false" />
-    </list>
+    <list default="true" id="090333c3-9549-4572-9f9d-5b5a0f808d5b" name="更改" comment="Pbar Mix" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -123,7 +120,7 @@
       <workItem from="1748706177862" duration="156000" />
       <workItem from="1748748052054" duration="715000" />
       <workItem from="1748752742164" duration="597000" />
-      <workItem from="1748762009212" duration="374000" />
+      <workItem from="1748762009212" duration="585000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1747590484790</created>
@@ -447,7 +444,14 @@
       <option name="project" value="LOCAL" />
       <updated>1748751170983</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="Pbar Mix">
+      <created>1748762472490</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1748762472490</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -509,7 +513,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Local Condition Change" />
     <MESSAGE value="Train Change" />
     <MESSAGE value="Global Condition" />
     <MESSAGE value="Dataset Modify" />
@@ -534,7 +537,8 @@
     <MESSAGE value="Feature Map Size Mix" />
     <MESSAGE value="Pipeline Infer Mix" />
     <MESSAGE value="Load Mix" />
-    <option name="LAST_COMMIT_MESSAGE" value="Load Mix" />
+    <MESSAGE value="Pbar Mix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pbar Mix" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Composer$load_and_save_test.coverage" NAME="load_and_save_test 覆盖结果" MODIFIED="1747366933428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
