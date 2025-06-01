@@ -154,7 +154,7 @@ def validation_step(model, val_dataloader, device, guidance_scale=7.5):
             val_loss += loss.item()
             num_batches += 1
 
-            val_pbar.set_postfix({'val_loss': f"{loss.item():.4f}"})
+            val_pbar.set_postfix({'val_loss': f"{loss.item()}"})
 
     avg_val_loss = val_loss / num_batches if num_batches > 0 else float('inf')
     return avg_val_loss
@@ -443,8 +443,8 @@ def main():
             # 更新进度条
             avg_loss = epoch_train_loss / (batch_idx + 1)
             epoch_pbar.set_postfix({
-                'batch_loss': f"{loss.item():.4f}",
-                'avg_loss': f"{avg_loss:.4f}",
+                'batch_loss': f"{loss.item()}",
+                'avg_loss': f"{avg_loss}",
                 'lr': f"{lr_scheduler.get_last_lr()[0]}"
             })
             epoch_pbar.update()
@@ -456,7 +456,7 @@ def main():
         epoch_pbar.close()
         avg_epoch_loss = epoch_train_loss / len(train_dataloader)
         tb_writer.add_scalar('train/epoch_loss', avg_epoch_loss, epoch)
-        logging.info(f"Epoch {epoch + 1} Train Loss: {avg_epoch_loss:.4f}")
+        logging.info(f"Epoch {epoch + 1} Train Loss: {avg_epoch_loss}")
 
         # 验证阶段
         if (epoch + 1) % validation_interval == 0 or epoch == num_epochs - 1:
@@ -468,7 +468,7 @@ def main():
                 guidance_scale
             )
             tb_writer.add_scalar('val/loss', val_loss, epoch)
-            logging.info(f"Validation Loss: {val_loss:.4f}")
+            logging.info(f"Validation Loss: {val_loss}")
 
             # 保存最佳模型
             if val_loss < best_val_loss:
@@ -478,7 +478,7 @@ def main():
                     model.module.save_custom_pretrained(save_path)
                 else:
                     model.save_custom_pretrained(save_path)
-                logging.info(f"New best model saved with validation loss: {best_val_loss:.4f}")
+                logging.info(f"New best model saved with validation loss: {best_val_loss}")
 
         # 定期保存检查点
         if (epoch + 1) % 10 == 0:
